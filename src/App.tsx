@@ -1,35 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import './App.css';
+import { Button, Form, Input } from 'antd';
+import { useOnLogin } from './services/auth';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const onLogin = useOnLogin();
+  const [form] = Form.useForm<{
+    id: string;
+    password: string;
+    nothing: string;
+  }>();
+
+  async function handleSubmit(e: any) {
+    onLogin.mutate(e);
+  }
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+    <div className='App' style={{ color: '#fff' }}>
+      로그인
+      <Form
+        form={form}
+        onFinish={value => {
+          handleSubmit(value);
+        }}
+      >
+        <Form.Item name='id' rules={[{ required: true }]} noStyle>
+          <Input placeholder={'id'} style={{ marginBottom: 8 }} />
+        </Form.Item>
+        <Form.Item name='password' rules={[{ required: true }]} noStyle>
+          <Input.Password
+            placeholder={'password'}
+            style={{ marginBottom: 8 }}
+          />
+        </Form.Item>
+
+        <Form.Item noStyle>
+          <Button
+            htmlType='submit'
+            loading={onLogin.isLoading}
+            style={{ width: '100%', marginTop: 40 }}
+          >
+            login
+          </Button>
+        </Form.Item>
+      </Form>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
